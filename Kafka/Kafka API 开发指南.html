@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Kafka API 开发指南</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style type="text/css">
+/* GitHub stylesheet for MarkdownPad (http://markdownpad.com) */
+/* Author: Nicolas Hery - http://nicolashery.com */
+/* Version: b13fe65ca28d2e568c6ed5d7f06581183df8f2ff */
+/* Source: https://github.com/nicolahery/markdownpad-github */
+
+/* RESET
+=============================================================================*/
+
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+/* BODY
+=============================================================================*/
+
+body {
+  font-family: Helvetica, arial, freesans, clean, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #333;
+  background-color: #fff;
+  padding: 20px;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+body>*:first-child {
+  margin-top: 0 !important;
+}
+
+body>*:last-child {
+  margin-bottom: 0 !important;
+}
+
+/* BLOCKS
+=============================================================================*/
+
+p, blockquote, ul, ol, dl, table, pre {
+  margin: 15px 0;
+}
+
+/* HEADERS
+=============================================================================*/
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 20px 0 10px;
+  padding: 0;
+  font-weight: bold;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1 tt, h1 code, h2 tt, h2 code, h3 tt, h3 code, h4 tt, h4 code, h5 tt, h5 code, h6 tt, h6 code {
+  font-size: inherit;
+}
+
+h1 {
+  font-size: 28px;
+  color: #000;
+}
+
+h2 {
+  font-size: 24px;
+  border-bottom: 1px solid #ccc;
+  color: #000;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777;
+  font-size: 14px;
+}
+
+body>h2:first-child, body>h1:first-child, body>h1:first-child+h2, body>h3:first-child, body>h4:first-child, body>h5:first-child, body>h6:first-child {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+a:first-child h1, a:first-child h2, a:first-child h3, a:first-child h4, a:first-child h5, a:first-child h6 {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+h1+p, h2+p, h3+p, h4+p, h5+p, h6+p {
+  margin-top: 10px;
+}
+
+/* LINKS
+=============================================================================*/
+
+a {
+  color: #4183C4;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* LISTS
+=============================================================================*/
+
+ul, ol {
+  padding-left: 30px;
+}
+
+ul li > :first-child, 
+ol li > :first-child, 
+ul li ul:first-of-type, 
+ol li ol:first-of-type, 
+ul li ol:first-of-type, 
+ol li ul:first-of-type {
+  margin-top: 0px;
+}
+
+ul ul, ul ol, ol ol, ol ul {
+  margin-bottom: 0;
+}
+
+dl {
+  padding: 0;
+}
+
+dl dt {
+  font-size: 14px;
+  font-weight: bold;
+  font-style: italic;
+  padding: 0;
+  margin: 15px 0 5px;
+}
+
+dl dt:first-child {
+  padding: 0;
+}
+
+dl dt>:first-child {
+  margin-top: 0px;
+}
+
+dl dt>:last-child {
+  margin-bottom: 0px;
+}
+
+dl dd {
+  margin: 0 0 15px;
+  padding: 0 15px;
+}
+
+dl dd>:first-child {
+  margin-top: 0px;
+}
+
+dl dd>:last-child {
+  margin-bottom: 0px;
+}
+
+/* CODE
+=============================================================================*/
+
+pre, code, tt {
+  font-size: 12px;
+  font-family: Consolas, "Liberation Mono", Courier, monospace;
+}
+
+code, tt {
+  margin: 0 0px;
+  padding: 0px 0px;
+  white-space: nowrap;
+  border: 1px solid #eaeaea;
+  background-color: #f8f8f8;
+  border-radius: 3px;
+}
+
+pre>code {
+  margin: 0;
+  padding: 0;
+  white-space: pre;
+  border: none;
+  background: transparent;
+}
+
+pre {
+  background-color: #f8f8f8;
+  border: 1px solid #ccc;
+  font-size: 13px;
+  line-height: 19px;
+  overflow: auto;
+  padding: 6px 10px;
+  border-radius: 3px;
+}
+
+pre code, pre tt {
+  background-color: transparent;
+  border: none;
+}
+
+kbd {
+    -moz-border-bottom-colors: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    background-color: #DDDDDD;
+    background-image: linear-gradient(#F1F1F1, #DDDDDD);
+    background-repeat: repeat-x;
+    border-color: #DDDDDD #CCCCCC #CCCCCC #DDDDDD;
+    border-image: none;
+    border-radius: 2px 2px 2px 2px;
+    border-style: solid;
+    border-width: 1px;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    line-height: 10px;
+    padding: 1px 4px;
+}
+
+/* QUOTES
+=============================================================================*/
+
+blockquote {
+  border-left: 4px solid #DDD;
+  padding: 0 15px;
+  color: #777;
+}
+
+blockquote>:first-child {
+  margin-top: 0px;
+}
+
+blockquote>:last-child {
+  margin-bottom: 0px;
+}
+
+/* HORIZONTAL RULES
+=============================================================================*/
+
+hr {
+  clear: both;
+  margin: 15px 0;
+  height: 0px;
+  overflow: hidden;
+  border: none;
+  background: transparent;
+  border-bottom: 4px solid #ddd;
+  padding: 0;
+}
+
+/* TABLES
+=============================================================================*/
+
+table th {
+  font-weight: bold;
+}
+
+table th, table td {
+  border: 1px solid #ccc;
+  padding: 6px 13px;
+}
+
+table tr {
+  border-top: 1px solid #ccc;
+  background-color: #fff;
+}
+
+table tr:nth-child(2n) {
+  background-color: #f8f8f8;
+}
+
+/* IMAGES
+=============================================================================*/
+
+img {
+  max-width: 100%
+}
+</style>
+<base href='file:\\\C:\Users\DELL\Documents\MarkDown\Kafka\'/>
+</head>
+<body>
+<p>启动之前：</p>
+<pre><code>./bin/zookeeper-server-start.sh config/zookeeper.properties
+</code></pre>
+
+<p>上面是Kafka自带的ZK，一般都是使用自己安装的ZK。</p>
+<h2>启动：</h2>
+<pre><code>./bin/kafka-server-start.sh config/server.properties &amp;
+</code></pre>
+
+<p>控制台创建topic：</p>
+<pre><code>./bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic test
+</code></pre>
+
+<p>控制台查看topic：</p>
+<pre><code>./bin/kafka-topics.sh --list --zookeeper localhost:2181
+</code></pre>
+
+<p>配置broker，发布一个不存在的topic时，自动创建topic。</p>
+<p>控制台发送msg：</p>
+<pre><code>./bin/kafka-console-producer.sh --broker-list localhost:9092 --topic test 
+</code></pre>
+
+<p>控制台消费msg：</p>
+<pre><code>./bin/kafka-console-consumer.sh --zookeeper localhost:2181 --topic test --from-beginning
+</code></pre>
+
+<p>设置多个broker集群：</p>
+<p>首先为每个broker创建一个配置文件：</p>
+<pre><code>cp config/server.properties config/server-1.properties 
+cp config/server.properties config/server-2.properties
+</code></pre>
+
+<p>编辑新建的文件，设置以下属性：</p>
+<pre><code>config/server-1.properties: 
+    broker.id=1 
+    listeners=PLAINTEXT://:9093 
+    log.dir=/tmp/kafka-logs-1
+
+config/server-2.properties: 
+    broker.id=2 
+    listeners=PLAINTEXT://:9094 
+    log.dir=/tmp/kafka-logs-2
+</code></pre>
+
+<p>broker.id 是集群中每个节点的唯一且永久的名称，修改端口和日志分区是因为在同一台机器上运行，需要防止broker在同一端口上注册和覆盖对方的数据。</p>
+<p>启动新的Kafka节点：</p>
+<pre><code>./bin/kafka-server-start.sh config/server-1.properties &amp;
+
+./bin/kafka-server-start.sh config/server-2.properties &amp;
+</code></pre>
+
+<p>查看topic详情：</p>
+<pre><code>./bin/kafka-topics.sh --describe --zookeeper localhost:2181 --topic my-replicated-topic
+</code></pre>
+
+<h2>生产者API：</h2>
+<p>鼓励所有开发者使用新的JAVA生产者。新的java客户端比老版本的scala的客户端更快，更全面。</p>
+<pre><code>&lt;dependency&gt;
+    &lt;groupId&gt;org.apache.kafka&lt;/groupId&gt;
+    &lt;artifactId&gt;kafka-clients&lt;/artifactId&gt;
+    &lt;version&gt;0.10.1.0&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
+
+<p>kafka客户端发布record（消息）到kafka集群。
+新的生产者是线程安全的，在线程之间共享单个生产者实例，通常比多个实例要快。</p>
+<p>废话少说，直接来一个例子：</p>
+<pre><code>package com.chuyun.kafkaConsumer;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
+
+import java.util.Properties;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+
+/**
+ * Created by DELL on 2017/3/17.
+ */
+public class KafkaProducerDemo {
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
+        Properties props = new Properties();
+        props.put(&quot;bootstrap.servers&quot;, &quot;spark-dev:9092&quot;);
+        props.put(&quot;acks&quot;, &quot;all&quot;);//判别请求是否为完整的条件，all将会阻塞消息，这种设置性能最低，但是是最可靠的。
+        props.put(&quot;retries&quot;, 0);//如果请求失败，重试次数，如果启用重试，则会有重复消息的可能性。
+        props.put(&quot;batch.size&quot;, 16384);//producer缓冲每个分区未发送消息，缓冲大小的设置，越大需要更多内存。
+        props.put(&quot;linger.ms&quot;, 1);//0的话，不满缓冲直接发送，大于0，等待一段时间，1毫秒延迟，换取更有效的请求。
+        props.put(&quot;buffer.memory&quot;, 33554432); //控制生产者可用的缓存总量，如果消息生产快与传输，将慢慢消耗这个缓存总量，消耗完了，其他
+        //发送将被阻塞，超过设定阻塞时间，跑出TimeoutException。
+        props.put(&quot;max.brock.ms&quot;,1024);//设定消息阻塞时间。
+        props.put(&quot;key.serializer&quot;, &quot;org.apache.kafka.common.serialization.StringSerializer&quot;);//key，value生产者是ProducerRecord对象，需要转换
+        props.put(&quot;value.serializer&quot;, &quot;org.apache.kafka.common.serialization.StringSerializer&quot;);//ByteArraySerializer和StringSerializer处理byte和String类型
+
+        KafkaProducer&lt;String, String&gt; producer = new KafkaProducer&lt;String, String&gt;(props);
+        Future&lt;RecordMetadata&gt; rs; //发送的结果是RecordMetadata，指定了消息发送的分区，分配的offset和消息的时间戳。send调用时异步的，为分配消息的RecordMetadata返回一个
+        //Future，如果future调用get()，则将阻塞，知道相关请求完成并返回该消息的metadata，或抛出发送异常。
+        for(int i = 0; i &lt; 100; i++){
+            //send()方法是异步的，添加消息到缓冲区等待发送，并立即返回，生产者将单个的消息批量在一起发送来提高效率。
+            RecordMetadata result = producer.send(new ProducerRecord&lt;String, String&gt;(&quot;my-topic&quot;, Integer.toString(i), Integer.toString(2 * i))).get();
+            System.out.println(&quot;topic:&quot;+result.topic() +  &quot; partition:&quot; + result.partition() + &quot;   offset:&quot;+result.offset());
+        }
+
+        producer.close(); //生产者的缓冲空间池保留尚未发送到服务器的消息，后台IO线程负责将这些消息转换成请求发送到集群，如果使用后不关闭
+        //生产者，则会泄露这些资源。
+    }
+}
+</code></pre>
+
+<p>想要完全无阻塞的话，可以利用回调参数提供的请求完成时将调用的回调通知。</p>
+<pre><code>    ProducerRecord&lt;byte[],byte[]&gt; record = new ProducerRecord&lt;byte[],byte[]&gt;(&quot;the-topic&quot;, key, value);
+ producer.send(myRecord,
+               new Callback() {
+                   public void onCompletion(RecordMetadata metadata, Exception e) {
+                       if(e != null)
+                           e.printStackTrace();
+                       System.out.println(&quot;The offset of the record we just sent is: &quot; + metadata.offset());
+                   }
+               });
+</code></pre>
+
+<p>发送到同一个分区的消息回调保证按照一定的顺序执行，例子：</p>
+<pre><code>producer.send(new ProducerRecord&lt;byte[],byte[]&gt;(topic, partition, key1, value1), callback1);
+producer.send(new ProducerRecord&lt;byte[],byte[]&gt;(topic, partition, key2, value2), callback2);
+</code></pre>
+
+<p>callback一般在生产者的IO线程中执行，是很快的，否则将延迟其他的线程的消息发送，如果需要执行阻塞或消耗的回调，建议在callcak主体中使用自己的executor来并行处理。</p>
+<p>InterruptException - 如果线程在阻塞中断。</p>
+<p>KafkaException - Kafka有关的错误，不属于API的异常。</p>
+<h2>消费者API</h2>
+<p>0.9版本以后，增加一个新的Java消费者替代现有的基于Zookeeper的高级和低级消费者。新的消费API，清除了0.8版本的高版本和低版本之间的区别。</p>
+<pre><code>&lt;dependency&gt;
+    &lt;groupId&gt;org.apache.kafka&lt;/groupId&gt;
+    &lt;artifactId&gt;kafka-clients&lt;/artifactId&gt;
+    &lt;version&gt;0.10.1.0&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
+
+<p>消费者的位置给出了下一条记录的偏移量，在每次消费者调用poll(long)中接收消息时自动增长。</p>
+<p>“已提交”的位置是已安全保存的最后偏移量，如果进程失败或重新启动时，消费者将恢复到这个偏移量，消费者可以徐娜则定期自动提交偏移量，也可以选择通过调用commit API来手动的控制（如commitSync和commitAsync）。</p>
+<p>之所以搞这么复杂，直观原因就是如果定义什么时候才算消费完数据呢。</p>
+<p>group.id是一组消费者组，组内的消费者通过subscribe API动态的订阅一个topic列表。Kafka将已订阅topic的消息发送到每个消费者组中。并通过平衡分区在消费者组所有成员之间平均。比如一个topic有4分分区，一个消费者组有2个消费者，每个消费者消费2个分区。</p>
+<p>消费者需要持续的调用poll,消费者将一直保持可用，并继续从分配的分区中接收消息。消费者向服务器定时发送心跳，如果消费者奔溃或无法再session.timeout.ms配置的时间内发送心跳，则消费者将被视为死亡，并且其分区将被重新分配。</p>
+<p>但是持续发送心跳，并没有处理也不行，kafka服务器可能认为消费端出现了“活锁”情况，一直持有分区，max.poll.interval.ms活跃检测机制：调用poll的频率大于最大间隔，则客户端将主动离开组，以便其他消费者接管该分区。出现offset提交失败。</p>
+<p>消费者提供两个配置设置来控制poll循环：</p>
+<ul>
+<li>max.poll.nterval.ms:增大poll的间隔，为消费者提供更多的时间去处理返回的消息，但会延迟组重新平衡。</li>
+<li>max.poll.records：每次调用poll返回的消息数。</li>
+</ul>
+<p>对于那些消息处理不可预测的问题，这些选项是不够的，推荐的方法是将消息移到另一个线程中，让消费者继续调用poll。但是要确保已提交的offset不超过实际位置。必须要禁用自动提交，并在线程完成处理后才为记手动提交偏移量。还需要pause分区，让线程处理完之前返回的消息，不会从poll接收到新消息。</p>
+<h4>上例子：自动提交偏移量</h4>
+<pre><code>Properties props = new Properties();
+props.put(&quot;bootstrap.servers&quot;, &quot;localhost:9092&quot;);
+props.put(&quot;group.id&quot;, &quot;test&quot;);
+props.put(&quot;enable.auto.commit&quot;, &quot;true&quot;);
+props.put(&quot;auto.commit.interval.ms&quot;, &quot;1000&quot;);
+props.put(&quot;key.deserializer&quot;, &quot;org.apache.kafka.common.serialization.StringDeserializer&quot;);
+props.put(&quot;value.deserializer&quot;, &quot;org.apache.kafka.common.serialization.StringDeserializer&quot;);
+KafkaConsumer&lt;String, String&gt; consumer = new KafkaConsumer&lt;&gt;(props);
+consumer.subscribe(Arrays.asList(&quot;foo&quot;, &quot;bar&quot;));
+while (true) {
+    ConsumerRecords&lt;String, String&gt; records = consumer.poll(100);
+    for (ConsumerRecord&lt;String, String&gt; record : records)
+         System.out.printf(&quot;offset = %d, key = %s, value = %s%n&quot;, record.offset(), record.key(), record.value());
+}
+</code></pre>
+
+<p>设置enable.auto.commit，偏移量由auto.commit.interval.ms控制自动提交的频率。
+上面的例子中，客户端订阅了topic主题foo和bar，消费者组叫test。</p>
+<h4>例子：手动控制偏移量</h4>
+<pre><code>Properties props = new Properties();
+ props.put(&quot;bootstrap.servers&quot;, &quot;localhost:9092&quot;);
+ props.put(&quot;group.id&quot;, &quot;test&quot;);
+ props.put(&quot;enable.auto.commit&quot;, &quot;false&quot;);
+ props.put(&quot;auto.commit.interval.ms&quot;, &quot;1000&quot;);
+ props.put(&quot;session.timeout.ms&quot;, &quot;30000&quot;);
+ props.put(&quot;key.deserializer&quot;, &quot;org.apache.kafka.common.serialization.StringDeserializer&quot;);
+ props.put(&quot;value.deserializer&quot;, &quot;org.apache.kafka.common.serialization.StringDeserializer&quot;);
+ KafkaConsumer&lt;String, String&gt; consumer = new KafkaConsumer&lt;&gt;(props);
+ consumer.subscribe(Arrays.asList(&quot;foo&quot;, &quot;bar&quot;));
+ final int minBatchSize = 200;
+ List&lt;ConsumerRecord&lt;String, String&gt;&gt; buffer = new ArrayList&lt;&gt;();
+ while (true) {
+     ConsumerRecords&lt;String, String&gt; records = consumer.poll(100);
+     for (ConsumerRecord&lt;String, String&gt; record : records) {
+         buffer.add(record);
+     }
+     if (buffer.size() &gt;= minBatchSize) {
+         insertIntoDb(buffer);
+         consumer.commitSync();
+         buffer.clear();
+     }
+ }
+</code></pre>
+
+<p>这个例子的特点是所有接收到消息为“已提交”，如果想要“至少一次”的保证，就要下次调用poll(long)之前或关闭消费者之前，处理完所有返回的数据。如果处理操作失败，有手动提交offset，那么实际上有些数据没有真正意义上消费到，也就是消息丢失了。</p>
+<p>commitSync表示所欲的消息为“已提交”。需要更精细控制，在处理完每个分区中的消息后，提交偏移量。</p>
+<pre><code>try {
+     while(running) {
+         ConsumerRecords&lt;String, String&gt; records = consumer.poll(Long.MAX_VALUE);
+         for (TopicPartition partition : records.partitions()) {
+             List&lt;ConsumerRecord&lt;String, String&gt;&gt; partitionRecords = records.records(partition);
+             for (ConsumerRecord&lt;String, String&gt; record : partitionRecords) {
+                 System.out.println(record.offset() + &quot;: &quot; + record.value());
+             }
+             long lastOffset = partitionRecords.get(partitionRecords.size() - 1).offset();
+             consumer.commitSync(Collections.singletonMap(partition, new OffsetAndMetadata(lastOffset + 1)));
+         }
+     }
+ } finally {
+   consumer.close();
+ }
+</code></pre>
+
+<h4>消费者流量控制</h4>
+<p>比如流处理，从2个topic中获取消息并把两个topic消息合并，当其中一个topic长时间落后另一个，则暂停消费，以便落后的赶上来。</p>
+<p>Kafka支持动态控制消费流量，分别在future的poll(long)中使用pause(Collection)和resume(Collection)来暂停消费指定分配的分区，重新开始消费指定暂停的分区。</p>
+<h4>多线程处理</h4>
+<p>Kafka消费者不是线程安全的，所有的网络IO都发生在进行调用应用程序的线程中，非同步访问将导致ConcurrentModificationException。</p>
+<p>此规则唯一的例外是wakeup(),它可以安全地从外部线程来中断活动操作。在这种情况下，将从操作的线程阻塞并抛出一个WakeupException。这可用于从其他线程来关闭消费者。</p>
+<p>上例子：</p>
+<pre><code>public class KafkaConsumerRunner implements Runnable {
+     private final AtomicBoolean closed = new AtomicBoolean(false);
+     private final KafkaConsumer consumer;
+
+     public void run() {
+         try {
+             consumer.subscribe(Arrays.asList(&quot;topic&quot;));
+             while (!closed.get()) {
+                 ConsumerRecords records = consumer.poll(10000);
+                 // Handle new records
+             }
+         } catch (WakeupException e) {
+             // Ignore exception if closing
+             if (!closed.get()) throw e;
+         } finally {
+             consumer.close();
+         }
+     }
+
+     // Shutdown hook which can be called from a separate thread
+     public void shutdown() {
+         closed.set(true);
+         consumer.wakeup();
+     }
+ }
+</code></pre>
+
+<p>在另外一个单独的线程中，可以通过设置标志和唤醒消费者来关闭消费者。</p>
+<pre><code>closed.set(true);
+consumer.wakeup();
+</code></pre>
+
+<h4>线程多少合适？</h4>
+<p>一般情况下，一个线程作为消费者，一个线程一个消费者实例。其优缺点如下：
+- PRO：单线程单消费者实例是最容易实现的
+- PRO：不需要县城之间协调，通常是最快的
+- PRO：按照顺序处理每个分区，每个线程只处理它接受的消息
+- CON：多消费者更多的TCP连接到集群，每个线程一个连接，Kafka处理连接非常快
+- CON：更多消费者，意味更多请求发送到服务器，数据低谷时导致IO吞吐量下降
+- CON：所有进程中的线程总数受到分区总数的限制</p>
+<h4>解耦消费和处理</h4>
+<p>一个或多个消费者线程，来消费所有数据，其消费所有数据并将COnsumerRecords实例切换到由实际处理记录的处理器线程池来消费的阻塞队列。
+-PRO：可扩展消费者和处理进程的数量，单个消费者的数据可以分发给多个处理器线程来执行，避免对分区的任何限制。
+-CON：线程是独立执行的，后来的消息可能优先处理，顺序是没有可能了。
+-CON：手动提交变得更困难了。</p>
+<p>还可以搞得更加复杂，每个线程可以有自己的队列。</p>
+<h2>Kafka Stream API</h2>
+<p>在0.10.0增加了一个新的客户端库，Kafka Stream。</p>
+<pre><code> &lt;dependency&gt;
+    &lt;groupId&gt;org.apache.kafka&lt;/groupId&gt;
+    &lt;artifactId&gt;kafka-streams&lt;/artifactId&gt;
+    &lt;version&gt;0.10.0.0&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
+
+<p>这个还是放弃吧，直接使用Spark Streaming消费Kafka数据来做实时处理吧！</p>
+
+</body>
+</html>
+<!-- This document was created with MarkdownPad, the Markdown editor for Windows (http://markdownpad.com) -->
